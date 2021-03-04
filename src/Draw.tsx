@@ -14,17 +14,29 @@ type Props = {
     offsetX: number;
     offsetY: number;
     strokeWidth: number;
+    startDelay?: number;
+
+    allowed?: () => void;
 };
 type State = {
     currentPath: Array<[number, number]>;
     svgPath: string;
     pressed: boolean;
+    allowed: boolean;
+    startTime: number;
 };
 
 export class Draw extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = {currentPath: [], pressed: false, svgPath: ""};
+        this.state = {
+            currentPath: [],
+            pressed: false,
+            svgPath: "",
+            allowed: this.props.startDelay === undefined,
+            startTime: 0
+        };
+        this._handleMoveShouldSetPanResponder = this._handleMoveShouldSetPanResponder.bind(this);
     }
 
 
@@ -33,7 +45,10 @@ export class Draw extends React.Component<Props, State> {
         gestureState: GestureState,
     ): boolean => {
         // Should we become active when the user presses down on the circle?
-        return true;
+        if(!this.state.allowed) {
+            this.setState({startTime: Date.now()});
+        }
+        return this.state.allowed;
     };
 
     _handleMoveShouldSetPanResponder = (
@@ -41,7 +56,14 @@ export class Draw extends React.Component<Props, State> {
         gestureState: GestureState,
     ): boolean => {
         // Should we become active when the user moves a touch over the circle?
-        return true;
+        let allowed = false;
+        if(this.state.allowed ||
+            this.state.startTime + (this.props.startDelay! * 1000) < Date.now()) {
+            allowed = true;
+            this.setState({allowed: true});
+            if(this.props.allowed !== undefined) this.props.allowed();
+        }
+        return allowed;
     };
 
     _handlePanResponderGrant = (
@@ -61,7 +83,7 @@ export class Draw extends React.Component<Props, State> {
         if(path.length !== 0 && oldPos[0] == pos[0] && oldPos[1] == pos[1]) {
             return;
         }
-        console.log("Move", pos);
+        //console.log("Move", pos);
         this.addToPath(pos);
     };
 
@@ -98,7 +120,7 @@ export class Draw extends React.Component<Props, State> {
                         <Svg stroke={"#000"}>
                             <Path
                                 d={this.state.svgPath}
-                                strokeWidth="32"
+                                strokeWidth={this.props.strokeWidth}
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             />

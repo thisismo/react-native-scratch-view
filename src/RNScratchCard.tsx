@@ -1,10 +1,13 @@
 // @flow
 import * as React from 'react';
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, TouchableOpacity, View} from "react-native";
 import {Draw} from "./Draw";
 
 type Props = {
     coverColor: string;
+    strokeWidth?: number;
+    startTimeout?: number;
+    onIsAllowed?: () => void;
 };
 type State = {
     offsetX: number;
@@ -15,6 +18,11 @@ export class RNScratchCard extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {offsetX: 0, offsetY: 0};
+        this.isAllowed = this.isAllowed.bind(this);
+    }
+
+    isAllowed() {
+        if(this.props.onIsAllowed !== undefined) this.props.onIsAllowed();
     }
 
     render() {
@@ -26,7 +34,7 @@ export class RNScratchCard extends React.Component<Props, State> {
                   }}>
                 <View style={styles.inner}>
                     <View style={[styles.cover, {backgroundColor: this.props.coverColor}]}>
-                        <Draw strokeWidth={30} offsetX={this.state.offsetX} offsetY={this.state.offsetY}>
+                        <Draw allowed={this.isAllowed} startDelay={this.props.startTimeout} strokeWidth={this.props.strokeWidth || 20} offsetX={this.state.offsetX} offsetY={this.state.offsetY}>
                             {this.props.children}
                         </Draw>
                     </View>
