@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         position: "relative",
+        height: '100%',
         flex: 1
     },
     inner: {

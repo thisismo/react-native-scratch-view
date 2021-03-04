@@ -8,8 +8,8 @@ export default function App() {
         <View style={styles.container}>
             <View style={{flex: 1, height: '100%'}}><Text>Jo</Text></View>
             <RNScratchCard startTimeout={0.5} strokeWidth={20} coverColor={'gray'}>
-                <View style={{width: '100%', height: '100%', backgroundColor: 'red'}}>
-                    <Text>Hey</Text>
+                <View style={{height: '100%', width: '100%'}}>
+                <Text>Hey</Text>
                 </View>
             </RNScratchCard>
         </View>
