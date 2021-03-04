@@ -4,7 +4,7 @@ import {StyleSheet, View} from "react-native";
 import {Draw} from "./Draw";
 
 type Props = {
-
+    coverColor: string;
 };
 type State = {
     offsetX: number;
@@ -25,11 +25,9 @@ export class RNScratchCard extends React.Component<Props, State> {
                       this.setState({offsetX: layout.x, offsetY: layout.y});
                   }}>
                 <View style={styles.inner}>
-                    <View style={styles.cover}>
+                    <View style={[styles.cover, {backgroundColor: this.props.coverColor}]}>
                         <Draw strokeWidth={30} offsetX={this.state.offsetX} offsetY={this.state.offsetY}>
-                            <View>
-                                {this.props.children}
-                            </View>
+                            {this.props.children}
                         </Draw>
                     </View>
                     <View>
@@ -55,8 +53,8 @@ const styles = StyleSheet.create({
     cover: {
         position: 'absolute',
         zIndex: 1,
-        backgroundColor: 'gray',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        backgroundColor: 'white'
     }
 });

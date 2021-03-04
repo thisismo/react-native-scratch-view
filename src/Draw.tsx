@@ -8,6 +8,7 @@ import type {
 import type {PressEvent} from 'react-native/Libraries/Types/CoreEventTypes';
 import {posToSVG} from "./helper";
 import Svg, {Path} from "react-native-svg";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 type Props = {
     offsetX: number;
@@ -60,6 +61,7 @@ export class Draw extends React.Component<Props, State> {
         if(path.length !== 0 && oldPos[0] == pos[0] && oldPos[1] == pos[1]) {
             return;
         }
+        console.log("Move", pos);
         this.addToPath(pos);
     };
 
@@ -90,16 +92,21 @@ export class Draw extends React.Component<Props, State> {
 
     render() {
         return (
-            <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: 'transparent'}}
-                  {...this._panResponder.panHandlers}>
-                <Svg stroke={"#000"}>
-                    <Path
-                        d={this.state.svgPath}
-                        strokeWidth="32"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                </Svg>
+            <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: 'transparent'}}>
+                <MaskedView style={{flex: 1}} maskElement={
+                    <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: 'transparent'}}>
+                        <Svg stroke={"#000"}>
+                            <Path
+                                d={this.state.svgPath}
+                                strokeWidth="32"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </Svg>
+                    </View>
+                } {...this._panResponder.panHandlers}>
+                    {this.props.children}
+                </MaskedView>
             </View>
         );
     };
